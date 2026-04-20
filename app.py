@@ -137,7 +137,7 @@ if uploaded_file is not None:
 st.markdown("""
 <br><br><br>
 <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-    Bu arayüzün UI/UX tasarımı ve kod mimarisi <b>Gemini (Ceminay) Yapay Zeka</b> desteğiyle geliştirilmiştir. ✨<br>
+    Bu arayüzün UI/UX tasarımı ve kod mimarisi <b>Gemini Yapay Zeka</b> desteğiyle geliştirilmiştir. ✨<br>
     <i>Designed for the future of dentistry.</i>
 </div>
 """, unsafe_allow_html=True)
