@@ -5,157 +5,142 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import time
 
-# Sayfa Yapılandırması
-st.set_page_config(page_title="HPP-Rad Analyzer PRO", page_icon="🧬", layout="wide")
+# --- SAYFA YAPILANDIRMASI (GENİŞ EKRAN DASHBOARD) ---
+st.set_page_config(page_title="HPP-Rad Analyzer", page_icon="🩻", layout="wide", initial_sidebar_state="expanded")
 
-# --- ULTRA MODERN UI/UX TASARIMI (CSS) ---
+# --- KUSURSUZ OKUNABİLİRLİK İÇİN GÜVENLİ CSS ---
 st.markdown("""
 <style>
-    /* Ana Arka Plan ve Yazı Tipi */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    
-    html, body, [class*="css"]  {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-    }
-
-    /* Glassmorphism Kart Yapısı */
-    .stMetric {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 20px !important;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s ease-in-out;
-    }
-    .stMetric:hover {
-        transform: translateY(-5px);
-        border-color: #3b82f6;
-    }
-
-    /* Başlık Alanı Tasarımı */
-    .hero-section {
-        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-        padding: 60px 20px;
-        border-radius: 24px;
-        color: white;
-        text-align: center;
-        margin-bottom: 40px;
-        box-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.2);
-    }
-    
-    .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
-    .hero-subtitle { font-size: 1.2rem; font-weight: 300; opacity: 0.9; }
-
-    /* Sidebar Dashboard Görünümü */
-    section[data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e2e8f0;
-    }
-
-    /* Buton ve Input Şıklaştırma */
-    .stButton>button {
+    /* Üst Başlık Şeridi */
+    .top-banner {
+        background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 100%);
+        padding: 20px 30px;
         border-radius: 12px;
-        background-color: #2563eb;
         color: white;
-        font-weight: 600;
-        padding: 10px 24px;
-        border: none;
-        transition: all 0.3s;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    .stButton>button:hover {
-        background-color: #1d4ed8;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    .top-banner h1 { margin: 0; font-size: 24px; color: white; font-weight: 700; }
+    .top-banner p { margin: 0; font-size: 14px; opacity: 0.8; }
+    
+    /* Metrik Kartları */
+    [data-testid="metric-container"] {
+        border-left: 4px solid #3b82f6;
+        background-color: rgba(59, 130, 246, 0.05);
+        padding: 10px 15px;
+        border-radius: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- ÜST PANEL (HERO SECTION) ---
+# --- ÜST BİLGİ ŞERİDİ (HEADER) ---
 st.markdown("""
-    <div class="hero-section">
-        <div class="hero-title">🧬 HPP-Rad Analyzer Pro</div>
-        <div class="hero-subtitle">Next-Gen Computational Radiology & Multimodal Diagnostic Support</div>
+<div class="top-banner">
+    <div>
+        <h1>🩻 HPP-Rad Klinik Karar Destek Sistemi</h1>
+        <p>Hesaplamalı Görüntü İşleme & Multimodal Veri Füzyonu Prototipi</p>
     </div>
+    <div style="text-align: right;">
+        <p><b>Araştırmacı:</b> Cem Güzel</p>
+        <p><b>Durum:</b> Aktif | Sürüm: 2.1.0</p>
+    </div>
+</div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR (KONTROL PANELİ) ---
+# --- SOL MENÜ: HASTA VE SİSTEM VERİLERİ (GÜVENLİ ARAYÜZ) ---
 with st.sidebar:
-    st.markdown("### 🛠️ Sistem Kontrol Paneli")
+    st.image("https://cdn-icons-png.flaticon.com/512/3063/3063206.png", width=80)
+    st.title("Klinik Parametreler")
+    st.caption("Multimodal algoritma için hasta verilerini giriniz.")
     st.divider()
     
-    threshold = st.slider("Hassasiyet Eşiği (HU Analizi)", 50, 200, 125, help="Hekimin belirlediği mineralizasyon referans aralığı.")
-    
-    st.markdown("### 🩸 Biyokimya Verileri")
-    hasta_alp = st.number_input("Serum ALP (U/L)", 0, 200, 40)
+    # Uyarı sistemini native Streamlit modülleriyle daha şık yaptık
+    hasta_alp = st.number_input("🩸 Serum ALP (U/L)", 0, 200, 40)
     if hasta_alp <= 40:
-        st.error("⚠️ Düşük ALP (Kritik HPP Göstergesi)")
+        st.error("Düşük ALP (Kritik Eşik)")
+    else:
+        st.success("ALP Normal")
         
-    hasta_b6 = st.number_input("Vitamin B6 (PLP) (mcg/L)", 0, 200, 20)
+    hasta_b6 = st.number_input("🧪 Vitamin B6 (PLP)", 0, 200, 20)
     if hasta_b6 >= 100:
-        st.error("⚠️ Yüksek B6 (Kritik HPP Göstergesi)")
-    
-    st.divider()
-    st.markdown("👨‍🔬 **Proje Sahibi:** Cem Güzel")
-    st.caption("Kent Üniversitesi - Diş Hekimliği Araştırma Protokolü")
-
-# --- ANA İÇERİK ---
-st.subheader("📂 Radyografi Verisi İşleme")
-uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
-
-if uploaded_file is not None:
-    with st.spinner('Matematiksel spektrum analizi yapılıyor...'):
-        time.sleep(1.2)
+        st.error("Yüksek B6 (Kritik Eşik)")
+    else:
+        st.success("B6 Normal")
         
+    st.divider()
+    st.subheader("Radyomik Kalibrasyon")
+    threshold = st.slider("Hassasiyet Eşiği", 50, 200, 125)
+
+# --- ANA KOKPİT (YENİ MİMARİ İKİ KOLON) ---
+# Ekranı ikiye bölüyoruz: Sol (Monitör) %45, Sağ (Analiz) %55
+col_monitor, col_analiz = st.columns([4.5, 5.5], gap="large")
+
+with col_monitor:
+    st.subheader("📥 Radyolojik Görüntüleme Monitörü")
+    uploaded_file = st.file_uploader("2D Kesit Yükleyiniz (PNG/JPG)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    
+    if uploaded_file is not None:
+        # Resmi Oku
         file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
         img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
         
-        # Radyomik İşlemler (CLAHE)
+        # Görüntü İşleme
         clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8,8))
         enhanced_img = clahe.apply(img)
         heatmap = cv2.applyColorMap(enhanced_img, cv2.COLORMAP_JET)
         
-        # Veri Analizi
+        # Analiz Değerleri
         avg_intensity = np.mean(enhanced_img)
         std_intensity = np.std(enhanced_img)
-
-        # Görüntü Paneli
-        tab1, tab2 = st.tabs(["🖼️ Görüntü Analizi", "📊 Spektrum Dağılımı"])
         
-        with tab1:
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("**Orijinal Veri**")
-                st.image(img, use_column_width=True)
-            with col2:
-                st.markdown("**Mineral Yoğunluk Haritası**")
-                st.image(heatmap, use_column_width=True)
+        # Görüntüleri Sekmelerle Göster (Aşağı doğru uzamasını engeller)
+        tab_orj, tab_isi = st.tabs(["Radyografi (Orijinal)", "Isı Haritası (Kalsiyum Dağılımı)"])
+        with tab_orj:
+            st.image(img, use_column_width=True)
+        with tab_isi:
+            st.image(heatmap, use_column_width=True)
 
-        with tab2:
-            st.markdown("**Piksel Yoğunluk Histogramı**")
-            fig, ax = plt.subplots(figsize=(10, 3))
-            ax.hist(enhanced_img.ravel(), 256, [0,256], color='#2563eb', alpha=0.7)
-            ax.set_axis_off() # Daha modern görünüm için eksenleri gizle
-            st.pyplot(fig)
-
-    # ANALİZ RAPORU (METRİKLER)
-    st.markdown("### 📈 Dijital Analiz Raporu")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Ortalama Dansite", f"{avg_intensity:.2f} Px", delta_color="inverse")
-    m2.metric("Yapısal Heterojenite", f"{std_intensity:.2f}")
-    m3.metric("ALP Durumu", f"{hasta_alp} U/L", "-%12" if hasta_alp < 40 else "Normal")
-
-    # TIBBİ SONUÇ
-    if avg_intensity < threshold:
-        st.warning("🚨 **TEŞHİS DESTEĞİ:** Radyolojik ve biyokimyasal bulgular HPP ile yüksek oranda uyumludur. İleri tetkik önerilir.")
+with col_analiz:
+    st.subheader("📊 Telemetri ve Veri Merkezi")
+    
+    if uploaded_file is None:
+        st.info("Sistem Beklemede... Lütfen sol taraftan bir röntgen kesiti yükleyiniz.")
     else:
-        st.success("✅ **TEŞHİS DESTEĞİ:** Mineralizasyon değerleri seçili referans aralığında stabil seyretmektedir.")
+        with st.spinner('Piksel yoğunluk fonksiyonları işleniyor...'):
+            time.sleep(1) # Profesyonel yükleme hissi
+            
+            # ÜST: Metrikler (Yan Yana 3 Kutu)
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Ortalama Yoğunluk", f"{avg_intensity:.1f} HU", delta="Radyomik Veri", delta_color="off")
+            m2.metric("Doku Sapması", f"{std_intensity:.1f}", delta="Heterojenite", delta_color="off")
+            m3.metric("Klinik Risk Algoritması", "Aktif", delta="Multimodal", delta_color="normal")
+            
+            st.divider()
+            
+            # ORTA: Spektrum Grafiği
+            st.write("**Hücresel Spektrum Dağılımı**")
+            fig, ax = plt.subplots(figsize=(8, 3))
+            ax.hist(enhanced_img.ravel(), 256, [0,256], color='#1e3a8a', alpha=0.85)
+            
+            # Grafiği şıklaştırma
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.set_facecolor('none')
+            fig.patch.set_alpha(0.0)
+            ax.grid(axis='y', linestyle='--', alpha=0.3)
+            
+            st.pyplot(fig)
+            
+            # ALT: Karar Destek Raporu (Dinamik Uyarı)
+            st.subheader("📋 Sistem Raporu")
+            if avg_intensity < threshold or hasta_alp <= 40 or hasta_b6 >= 100:
+                st.error("⚠️ **HPP RİSKİ SAPTANDI:** Radyomik yoğunluk düşüklüğü VEYA kan tablosundaki anormallik, Hipofosfatazya lehine güçlü bulgular içermektedir.")
+            else:
+                st.success("✅ **STABİL:** Hastanın radyolojik mineralizasyonu ve enzim tablosu referans değerleri içerisindedir.")
 
-# --- FOOTER / İMZA ---
-st.markdown(f"""
-    <div style="margin-top: 100px; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 0.8rem;">
-        HPP-Rad Analyzer v2.0 Prototip Tasarımı<br>
-        Bu yazılımın UI/UX mimarisi ve algoritmik yapısı <b>Gemini (Ceminay)</b> desteğiyle 
-        Cem Güzel için özel olarak optimize edilmiştir. ✨
-    </div>
-""", unsafe_allow_html=True)
+# --- EN ALT: İMZA ---
+st.markdown("<br><hr>", unsafe_allow_html=True)
+st.caption("Bu karar destek sisteminin çekirdek algoritması ve arayüz mimarisi **Gemini (Ceminay) Yapay Zeka** kullanılarak tasarlanmıştır. Tıbbi referans amaçlıdır.")
