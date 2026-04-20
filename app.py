@@ -48,8 +48,16 @@ threshold = st.sidebar.slider("Hassasiyet Eşiği (Referans Skalası)", 50, 200,
 st.sidebar.divider()
 st.sidebar.header("🩸 Biyokimyasal Parametreler")
 st.sidebar.caption("Gelecek Vizyonu: AI Veri Füzyonu İçin")
+
+# Serum ALP Girdisi ve Mantıksal Uyarısı
 hasta_alp = st.sidebar.number_input("Serum ALP (U/L)", min_value=0, max_value=200, value=40)
-hasta_b6 = st.sidebar.number_input("Vitamin B6 (PLP) (ng/mL)", min_value=0, max_value=100, value=20)
+if hasta_alp <= 40:
+    st.sidebar.error("⚠️ KRİTİK EŞİĞİN ALTINDA (HPP Riski)")
+
+# Vitamin B6 Girdisi ve Mantıksal Uyarısı
+hasta_b6 = st.sidebar.number_input("Vitamin B6 (PLP) (mcg/L)", min_value=0, max_value=200, value=20)
+if hasta_b6 >= 100:
+    st.sidebar.error("⚠️ KRİTİK EŞİĞİN ÜSTÜNDE (HPP Riski)")
 
 st.sidebar.divider()
 st.sidebar.info("👨‍🔬 **Proje Yöneticisi:** Cem Güzel")
