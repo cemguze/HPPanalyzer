@@ -143,4 +143,4 @@ with col_analiz:
 
 # --- EN ALT: İMZA ---
 st.markdown("<br><hr>", unsafe_allow_html=True)
-st.caption("Bu karar destek sisteminin çekirdek algoritması ve arayüz mimarisi **Gemini (Ceminay) Yapay Zeka** kullanılarak tasarlanmıştır. Tıbbi referans amaçlıdır.")
+st.caption("Bu karar destek sisteminin çekirdek algoritması ve arayüz mimarisi **Gemini Yapay Zeka** kullanılarak tasarlanmıştır. Tıbbi referans amaçlıdır.")
